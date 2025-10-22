@@ -68,8 +68,6 @@ export const TestRecorder = () => {
             return;
         }
 
-        addLog(`About to stop. isRecording: ${audioRecorder.isRecording}`);
-
         addLog('Stopping recording...');
         const startTime = Date.now();
 
@@ -95,7 +93,7 @@ export const TestRecorder = () => {
                     interruptionMode: Platform.OS === 'ios' ? 'duckOthers' : 'doNotMix',
                     shouldRouteThroughEarpiece: false,
                 });
-                addLog('✅ Audio mode ready');
+                addLog('setAudioModeAsync complete');
             } catch (error) {
                 addLog(`❌ Audio mode error: ${error}`);
             }
@@ -105,7 +103,6 @@ export const TestRecorder = () => {
 
     // Audio playback functions
     const loadAudio = async () => {
-        addLog('Loading audio...');
         const startTime = Date.now();
 
         try {
@@ -124,7 +121,6 @@ export const TestRecorder = () => {
         }
 
         setShowAudioPlaySpinner(true);
-        addLog("Setting spinner to true, current value: " + showAudioPlaySpinner);
 
         // Use setTimeout to allow React to re-render with spinner visible
         setTimeout(async () => {
@@ -138,7 +134,6 @@ export const TestRecorder = () => {
             } catch (error) {
                 addLog(`Audio play error: ${error}`);
             } finally {
-                addLog("Setting spinner to false");
                 setShowAudioPlaySpinner(false);
             }
         }, 0); // 0ms delay - just enough to let React re-render
@@ -169,7 +164,6 @@ export const TestRecorder = () => {
                 });
 
                 await audioRecorder.prepareToRecordAsync();
-                addLog('✅ Prepared!', prepareStart);
 
                 const recordStart = Date.now();
                 addLog('Calling record()');
@@ -192,7 +186,6 @@ export const TestRecorder = () => {
         }
 
         setIsPlayingRecording(true);
-        addLog("Setting recording spinner to true, current value: " + isPlayingRecording);
 
         // Use setTimeout to allow React to re-render with spinner visible
         setTimeout(async () => {
@@ -330,6 +323,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 20,
+        paddingTop: 100,  // Add top padding to move content down from status bar
         backgroundColor: '#f5f5f5',
     },
     title: {
