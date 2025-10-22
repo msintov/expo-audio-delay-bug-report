@@ -77,7 +77,6 @@ export const TestRecorder = () => {
 
             const uri = audioRecorder.uri;
             if (uri) {
-                addLog(`Recording saved to: ${uri}`);
                 setRecordingUri(uri);
                 setRecorderPrepared(false); // Reset for next recording. TODO what does this do?
             }
@@ -93,7 +92,7 @@ export const TestRecorder = () => {
                     interruptionMode: Platform.OS === 'ios' ? 'duckOthers' : 'doNotMix',
                     shouldRouteThroughEarpiece: false,
                 });
-                addLog('setAudioModeAsync complete');
+                addLog('Stop Recording. setAudioModeAsync complete.');
             } catch (error) {
                 addLog(`❌ Audio mode error: ${error}`);
             }
@@ -145,19 +144,20 @@ export const TestRecorder = () => {
             return;
         }
 
-        addLog('Pausing audio...');
         audioPlayer.pause();
+        addLog('Audio paused');
     };
 
     const startRecording = async () => {
         setIsStartingRecording(true);
         const sequenceStart = Date.now();
 
-        addLog('Calling prepareToRecordAsync (after pause)...');
+        addLog('Calling prepareToRecordAsync...');
         const prepareStart = Date.now();
         setTimeout(async () => {
             try {
                 console.log("calling setAudioModeAsync with allowsRecording");
+                const startTime = Date.now();
                 await AudioModule.setAudioModeAsync({
                     allowsRecording: true,
                     playsInSilentMode: true,
@@ -165,10 +165,10 @@ export const TestRecorder = () => {
 
                 await audioRecorder.prepareToRecordAsync();
 
-                const recordStart = Date.now();
                 addLog('Calling record()');
                 await audioRecorder.record();
-                addLog('after await record', recordStart);
+                const elapsed = Date.now() - startTime;
+                addLog(`Recording started after ${elapsed}ms`);
 
                 setRecorderPrepared(true); // TODO: What is this for?
             } catch (error) {
